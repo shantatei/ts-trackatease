@@ -36,7 +36,7 @@ const Form = () => {
       justifyContent="center"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Heading>Create Tracker</Heading>
+      <Heading>Tracker ID</Heading>
       <FormControl isInvalid={errors.deviceid != null}>
         <FormLabel>Device Id</FormLabel>
         <Input
