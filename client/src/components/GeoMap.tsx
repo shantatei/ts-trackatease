@@ -12,6 +12,7 @@ import { SetMarker } from "../redux/markerSlice";
 import { useSelector, useDispatch } from "react-redux";
 
 const GeoMap = () => {
+
   const markerLatitude = useSelector(
     (state: RootState) => state.marker.latitude
   );

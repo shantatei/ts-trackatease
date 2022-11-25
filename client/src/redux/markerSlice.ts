@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface MarkerState {
-    longitude: number,
-    latitude: number
+    longitude: number;
+    latitude: number;
 }
 
 const initialState: MarkerState = {
@@ -15,7 +15,7 @@ export const markerSlice = createSlice({
     name: 'marker',
     initialState,
     reducers: {
-        SetMarker: (state, {payload}) => {
+        SetMarker: (state, { payload }) => {
             state.longitude = payload.longitude;
             state.latitude = payload.latitude;
         },
@@ -27,6 +27,6 @@ export const markerSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { SetMarker,ResetMarker } = markerSlice.actions
+export const { SetMarker, ResetMarker } = markerSlice.actions
 
 export default markerSlice.reducer
