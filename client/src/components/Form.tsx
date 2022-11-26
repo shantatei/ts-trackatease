@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import {
   FormControl,
   FormLabel,
@@ -9,7 +9,7 @@ import {
   Button,
   HStack,
 } from "@chakra-ui/react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import socket from "../socket";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store";
@@ -22,8 +22,8 @@ interface FormValues {
   timestamp: number;
 }
 
-const Form = () => {
-  const [currentTime, setCurrentTime] = useState(Date.now());
+const Form: FC = () => {
+  const [currentTime, setCurrentTime] = useState<number>(Date.now());
 
   const markerLatitude = useSelector(
     (state: RootState) => state.marker.latitude
@@ -33,13 +33,15 @@ const Form = () => {
   );
   const dispatch = useDispatch();
   const {
-    control,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
 
   const onSubmit = (data: FormValues) => {
+    data.lat = markerLatitude;
+    data.long = markerLongitude;
+    data.timestamp = currentTime;
     console.log(data);
     socket.emit("track", data);
   };

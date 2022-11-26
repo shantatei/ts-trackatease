@@ -15,9 +15,9 @@ export const markerSlice = createSlice({
     name: 'marker',
     initialState,
     reducers: {
-        SetMarker: (state, { payload }) => {
-            state.longitude = payload.longitude;
-            state.latitude = payload.latitude;
+        SetMarker: (state, action: PayloadAction<MarkerState>) => {
+            state.longitude = action.payload.longitude;
+            state.latitude = action.payload.latitude;
         },
         ResetMarker: (state) => {
             state.longitude = 103.94247239896549;

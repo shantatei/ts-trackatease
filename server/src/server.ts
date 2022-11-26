@@ -14,6 +14,9 @@ const io = new Server(server, {
 
 interface FormValues {
   deviceid: string;
+  long: number;
+  lat: number;
+  timestamp: number;
 }
 
 io.on('connection', socket => {
@@ -29,9 +32,9 @@ io.on('connection', socket => {
 
     console.log('connected')
 
-    socket.on('track', (data) => {
+    socket.on('track', (data:FormValues) => {
       console.log(data)
-      // device.publish('device/location', data)
+      device.publish('device/location', JSON.stringify(data))
     })
 
     device.on("message", (topic, payload) => {

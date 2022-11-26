@@ -6,13 +6,12 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl";
 import { Box } from "@chakra-ui/react";
-import { useEffect} from "react";
+import { FC, useEffect } from "react";
 import type { RootState } from "../store";
 import { SetMarker } from "../redux/markerSlice";
 import { useSelector, useDispatch } from "react-redux";
 
-const GeoMap = () => {
-
+const GeoMap: FC = () => {
   const markerLatitude = useSelector(
     (state: RootState) => state.marker.latitude
   );
