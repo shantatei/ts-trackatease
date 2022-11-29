@@ -14,6 +14,8 @@ import socket from "../socket";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store";
 import { ResetMarker } from "../redux/markerSlice";
+import useInterval from "../hooks/useInterval";
+import { SetMarker } from "../redux/markerSlice";
 
 interface FormValues {
   deviceid: string;
@@ -23,7 +25,11 @@ interface FormValues {
 }
 
 const Form: FC = () => {
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
   const [currentTime, setCurrentTime] = useState<number>(Date.now());
+
+  const [tracking, setTracking] = useState<boolean>(false);
 
   const markerLatitude = useSelector(
     (state: RootState) => state.marker.latitude
@@ -31,7 +37,19 @@ const Form: FC = () => {
   const markerLongitude = useSelector(
     (state: RootState) => state.marker.longitude
   );
+
+  const route = [
+    [103.94136894924048, 1.354119067616665],
+    [103.94139402764387, 1.35163699781792],
+    [103.93931252020957, 1.3517372835158312],
+    [103.93795828645739, 1.3503834262480012],
+    [103.93835954090218, 1.346522421753619],
+    [103.93830938409678, 1.344667131702792],
+    [103.93284229227987, 1.3467731365166031],
+    [103.931312509708, 1.3460209921494908],
+  ];
   const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -42,8 +60,11 @@ const Form: FC = () => {
     data.lat = markerLatitude;
     data.long = markerLongitude;
     data.timestamp = currentTime;
+
+    setTracking(true);
     console.log(data);
-    socket.emit("track", data);
+
+    // socket.emit("track", data);
   };
 
   useEffect(() => {
@@ -51,6 +72,31 @@ const Form: FC = () => {
       setCurrentTime(Date.now());
     }, 5000);
   }, [currentTime]);
+
+  useInterval(
+    () => {
+      if (tracking !== true) return;
+      setCurrentIndex((currentIndex) => {
+        if (route.length == currentIndex + 1) {
+          setTracking(false);
+          return currentIndex;
+        }
+        return currentIndex + 1;
+      });
+    },
+    5000,
+    [tracking]
+  );
+
+  useEffect(() => {
+    const coordinate = route[currentIndex];
+    dispatch(
+      SetMarker({
+        longitude: coordinate[0],
+        latitude: coordinate[1],
+      })
+    );
+  }, [currentIndex]);
 
   return (
     <VStack
@@ -75,6 +121,7 @@ const Form: FC = () => {
       <FormControl isInvalid={errors.long != null}>
         <FormLabel>Longitude</FormLabel>
         <Input
+          readOnly
           value={markerLongitude}
           {...register("long", {
             required: "Longitude is Required",
@@ -85,6 +132,7 @@ const Form: FC = () => {
       <FormControl isInvalid={errors.lat != null}>
         <FormLabel>Latitude</FormLabel>
         <Input
+          readOnly
           value={markerLatitude}
           {...register("lat", {
             required: "Latitude is Required",
@@ -95,6 +143,7 @@ const Form: FC = () => {
       <FormControl isInvalid={errors.timestamp != null}>
         <FormLabel>TimeStamp</FormLabel>
         <Input
+          readOnly
           value={currentTime}
           {...register("timestamp", {
             required: "Timestamp is Required",
@@ -110,7 +159,10 @@ const Form: FC = () => {
           colorScheme="pink"
           variant="solid"
           w="100%"
-          onClick={() => dispatch(ResetMarker())}
+          onClick={() => {
+            setCurrentIndex(0);
+            dispatch(ResetMarker());
+          }}
         >
           Reset
         </Button>

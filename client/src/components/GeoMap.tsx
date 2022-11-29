@@ -6,12 +6,15 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl";
 import { Box } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import type { RootState } from "../store";
-import { SetMarker } from "../redux/markerSlice";
+
 import { useSelector, useDispatch } from "react-redux";
 
+
 const GeoMap: FC = () => {
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
   const markerLatitude = useSelector(
     (state: RootState) => state.marker.latitude
   );
@@ -26,30 +29,11 @@ const GeoMap: FC = () => {
     zoom: 14,
   };
 
-  const route = [
-    [103.94136894924048, 1.354119067616665],
-    [103.94139402764387, 1.35163699781792],
-    [103.93931252020957, 1.3517372835158312],
-    [103.93795828645739, 1.3503834262480012],
-    [103.93835954090218, 1.346522421753619],
-    [103.93830938409678, 1.344667131702792],
-    [103.93284229227987, 1.3467731365166031],
-    [103.931312509708, 1.3460209921494908],
-  ];
+ 
 
-  useEffect(() => {
-    for (let index = 0; index < route.length; index++) {
-      const coordinate = route[index];
-      setTimeout(() => {
-        dispatch(
-          SetMarker({
-            longitude: coordinate[0],
-            latitude: coordinate[1],
-          })
-        );
-      }, 5000);
-    }
-  }, []);
+  
+
+  
 
   const safezone = {
     type: "FeatureCollection" as "FeatureCollection",
