@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import markerReducer from './redux/markerSlice'
+import trackerReducer from "./redux/trackerSlice";
 
 export const store = configureStore({
     reducer: {
         marker: markerReducer,
+        tracker:trackerReducer
     },
 })
 

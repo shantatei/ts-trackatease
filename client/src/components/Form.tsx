@@ -16,6 +16,7 @@ import type { RootState } from "../store";
 import { ResetMarker } from "../redux/markerSlice";
 import useInterval from "../hooks/useInterval";
 import { SetMarker } from "../redux/markerSlice";
+import { ResetTracker, SetTracker } from "../redux/trackerSlice";
 
 interface FormValues {
   deviceid: string;
@@ -37,6 +38,8 @@ const Form: FC = () => {
   const markerLongitude = useSelector(
     (state: RootState) => state.marker.longitude
   );
+
+  const deviceID = useSelector((state: RootState) => state.tracker.deviceid);
 
   const route = [
     [103.94136894924048, 1.354119067616665],
@@ -61,10 +64,8 @@ const Form: FC = () => {
     data.long = markerLongitude;
     data.timestamp = currentTime;
 
+    dispatch(SetTracker(data));
     setTracking(true);
-    console.log(data);
-
-    // socket.emit("track", data);
   };
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const Form: FC = () => {
           setTracking(false);
           return currentIndex;
         }
+
         return currentIndex + 1;
       });
     },
@@ -97,6 +99,27 @@ const Form: FC = () => {
       })
     );
   }, [currentIndex]);
+
+  useEffect(() => {
+    dispatch(
+      SetTracker({
+        deviceid: deviceID,
+        lat: markerLatitude,
+        long: markerLongitude,
+        timestamp: currentTime,
+      })
+    );
+  }, [markerLatitude, markerLongitude]);
+
+  useEffect(() => {
+    if (tracking !== true) return;
+    socket.emit("track", {
+      deviceid: deviceID,
+      lat: markerLatitude,
+      long: markerLongitude,
+      timestamp: currentTime,
+    });
+  }, [markerLatitude, markerLongitude, tracking]);
 
   return (
     <VStack
@@ -160,8 +183,10 @@ const Form: FC = () => {
           variant="solid"
           w="100%"
           onClick={() => {
+            setTracking(false);
             setCurrentIndex(0);
             dispatch(ResetMarker());
+            dispatch(ResetTracker());
           }}
         >
           Reset

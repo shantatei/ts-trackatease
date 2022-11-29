@@ -32,8 +32,7 @@ io.on('connection', socket => {
 
     console.log('connected')
 
-    socket.on('track', (data:FormValues) => {
-      console.log(data)
+    socket.on('track', (data: FormValues) => {
       device.publish('device/location', JSON.stringify(data))
     })
 
