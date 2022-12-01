@@ -65,7 +65,11 @@ const Form: FC = () => {
     data.timestamp = currentTime;
 
     dispatch(SetTracker(data));
-    setTracking(true);
+    if (route.length == currentIndex + 1) {
+      setTracking(false);
+    } else {
+      setTracking(true);
+    }
   };
 
   useEffect(() => {
@@ -175,7 +179,13 @@ const Form: FC = () => {
         <FormErrorMessage>{errors.timestamp?.message}</FormErrorMessage>
       </FormControl>
       <HStack w="100%">
-        <Button type="submit" variant="outline" w="100%">
+        <Button
+          type="submit"
+          variant="outline"
+          w="100%"
+          isLoading={tracking}
+          loadingText="Tracking"
+        >
           Confirm
         </Button>
         <Button
