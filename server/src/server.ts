@@ -17,6 +17,7 @@ interface FormValues {
   long: number;
   lat: number;
   timestamp: number;
+  fallen: boolean;
 }
 
 io.on('connection', socket => {
@@ -42,24 +43,6 @@ io.on('connection', socket => {
     });
   })
 })
-
-
-const current = Date.now();
-
-// device.on("connect", function () {
-//   console.log("connect");
-//   device.subscribe("device/location");
-//   device.publish(
-//     "device/location",
-//     JSON.stringify({
-//       long: 103.93173401321536,
-//       lat: 1.3454414032635071,
-//       deviceid: "Temasek",
-//       timestamp: current,
-//     })
-//   );
-// });
-
 
 
 server.listen(8080, () => {

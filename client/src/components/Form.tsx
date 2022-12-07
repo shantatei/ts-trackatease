@@ -8,6 +8,7 @@ import {
   Heading,
   Button,
   HStack,
+  Switch,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import socket from "../socket";
@@ -16,13 +17,14 @@ import type { RootState } from "../store";
 import { ResetMarker } from "../redux/markerSlice";
 import useInterval from "../hooks/useInterval";
 import { SetMarker } from "../redux/markerSlice";
-import { ResetTracker, SetTracker } from "../redux/trackerSlice";
+import { ResetTracker, SetFall, SetTracker } from "../redux/trackerSlice";
 
 interface FormValues {
   deviceid: string;
   long: number;
   lat: number;
   timestamp: number;
+  fallen: boolean;
 }
 
 const Form: FC = () => {
@@ -40,6 +42,17 @@ const Form: FC = () => {
   );
 
   const deviceID = useSelector((state: RootState) => state.tracker.deviceid);
+
+  const hasFallen = useSelector((state: RootState) => state.tracker.fallen);
+
+  const handleSwitchOnChange = () => {
+    const newValue = !hasFallen;
+    dispatch(
+      SetFall({
+        fallen: newValue,
+      })
+    );
+  };
 
   const route = [
     [103.94136894924048, 1.354119067616665],
@@ -65,6 +78,7 @@ const Form: FC = () => {
     data.lat = markerLatitude;
     data.long = markerLongitude;
     data.timestamp = currentTime;
+    data.fallen = hasFallen;
 
     dispatch(SetTracker(data));
     if (route.length == currentIndex + 1) {
@@ -113,6 +127,7 @@ const Form: FC = () => {
         lat: markerLatitude,
         long: markerLongitude,
         timestamp: currentTime,
+        fallen: hasFallen,
       })
     );
   }, [markerLatitude, markerLongitude]);
@@ -124,6 +139,7 @@ const Form: FC = () => {
       lat: markerLatitude,
       long: markerLongitude,
       timestamp: currentTime,
+      fallen: hasFallen,
     });
   }, [markerLatitude, markerLongitude, tracking]);
 
@@ -177,6 +193,23 @@ const Form: FC = () => {
           {...register("timestamp", {
             required: "Timestamp is Required",
           })}
+        />
+        <FormErrorMessage>{errors.timestamp?.message}</FormErrorMessage>
+      </FormControl>
+      <FormControl
+        isInvalid={errors.timestamp != null}
+        display="flex"
+        alignItems="center"
+      >
+        <FormLabel htmlFor="hasfall" mb="0">
+          Fallen ?
+        </FormLabel>
+        <Switch
+          id="hasfall"
+          colorScheme="teal"
+          size="lg"
+          defaultChecked={false}
+          onChange={handleSwitchOnChange}
         />
         <FormErrorMessage>{errors.timestamp?.message}</FormErrorMessage>
       </FormControl>
