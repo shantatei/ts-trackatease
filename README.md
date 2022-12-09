@@ -5,6 +5,7 @@ This project is an IoT project which utilizes AWS Services . It contains the sou
 ## To run the project
 cmd
 $ cd client
+
 $ npm i
 $ npm run dev
 $ cd server
